@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-// Phần 1: Khai báo các biến và hằng số
     const sidebar = document.querySelector('.sidebar');
     const toggleBtn = document.querySelector('.toggle-sidebar-btn');
     const mainContents = document.querySelectorAll('.main-content');
@@ -35,33 +34,30 @@ document.addEventListener('DOMContentLoaded', function() {
     function saveTypingSetting(key, value) {
         localStorage.setItem(key, value);
     }
-    
+
     function getTypingSetting(key, defaultValue) {
         return localStorage.getItem(key) || defaultValue;
     }
-    
+
     if (showTypoSwitch) {
         showTypoSwitch.checked = isTypoShown;
         showTypoSwitch.addEventListener('change', function() {
             const isChecked = this.checked;
             saveTypingSetting(SHOW_TYPO_KEY, isChecked);
-            isTypoShown = isChecked; // Cập nhật trực tiếp biến isTypoShown
+            isTypoShown = isChecked;
             console.log('Trạng thái hiển thị lỗi đã được lưu và cập nhật:', isChecked);
         });
     }
 
-    // Lấy các phần tử HTML liên quan đến tùy chọn thời gian
     const durationSelect = document.getElementById('duration-select');
     const customDurationInputContainer = document.querySelector('.custom-duration-input');
-    const customDurationInput = document.getElementById('custom-duration'); // Đảm bảo đã khai báo
+    const customDurationInput = document.getElementById('custom-duration');
 
-    // Ẩn phần nhập số giây tùy chỉnh ban đầu và thiết lập giá trị ban đầu
     if (customDurationInputContainer) {
         const durationType = getTypingSetting(DURATION_KEY + '_type', 'fixed').toLowerCase();
         customDurationInputContainer.style.display = durationType === 'custom' ? 'flex' : 'none';
 
         if (customDurationInput) {
-            // Lấy giá trị tùy chỉnh đã lưu và hiển thị
             const savedCustomDuration = getTypingSetting(DURATION_KEY + '_custom', '60');
             customDurationInput.value = savedCustomDuration;
 
@@ -71,14 +67,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     if (durationSelect) {
-        durationSelect.value = getTypingSetting(DURATION_KEY + '_type', '1'); // Mặc định là 1 phút
+        durationSelect.value = getTypingSetting(DURATION_KEY + '_type', '1');
 
         durationSelect.addEventListener('change', function() {
             saveTypingSetting(DURATION_KEY + '_type', this.value);
             if (this.value === 'Custom') {
                 if (customDurationInputContainer) {
                     customDurationInputContainer.style.display = 'flex';
-                    // Đảm bảo hiển thị lại giá trị đã lưu khi chuyển sang Custom
                     if (customDurationInput) {
                         const savedCustomDuration = getTypingSetting(DURATION_KEY + '_custom', '60');
                         customDurationInput.value = savedCustomDuration;
@@ -88,10 +83,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (customDurationInputContainer) {
                     customDurationInputContainer.style.display = 'none';
                 }
-                // Lưu giá trị cố định đã chọn để lần sau còn nhớ
                 saveTypingSetting(DURATION_KEY + '_fixed', this.value);
             }
-            // Có thể bạn muốn gọi initTypingGame() ở đây nếu trang Luyện gõ đang mở
         });
     }
 
@@ -106,14 +99,14 @@ document.addEventListener('DOMContentLoaded', function() {
     let wordsTyped = 0;
     let currentText = [];
     let timerStartedOnFocusAndInput = false;
-    let linesOfText = []; // Mảng chứa các hàng văn bản
-    let currentLineIndex = 0; // Theo dõi hàng hiện tại đang gõ
-    let currentWordIndexInLine = 0; // Theo dõi từ hiện tại trong hàng
-    let wordSpacing; // Khai báo wordSpacing ở đây
+    let linesOfText = [];
+    let currentLineIndex = 0;
+    let currentWordIndexInLine = 0;
+    let wordSpacing;
     let totalKeyStrokes = 0;
-    let totalCorrectChars = 0; // Tổng số ký tự đúng từ đầu bài
-    let totalIncorrectChars = 0; // Tổng số ký tự sai từ đầu bài
-    let startTime = null; // Thời điểm bắt đầu bài kiểm tra
+    let totalCorrectChars = 0;
+    let totalIncorrectChars = 0;
+    let startTime = null;
     let finalWPM = 0;
     let finalAccuracy = 0;
 
@@ -124,10 +117,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const paddingRight = parseFloat(getComputedStyle(wordDisplay).paddingRight) || 0;
             return wordDisplay.offsetWidth - paddingLeft - paddingRight;
         }
-        return 680; // Giá trị mặc định nếu không tìm thấy wordDisplay
+        return 680;
     }
 
-    // Đo chiều rộng thực tế của khoảng trắng và cập nhật wordSpacing
     function getSpaceWidth() {
         if (!wordDisplay) {
             console.error('.word-display element is not available');
@@ -146,9 +138,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     const actualSpaceWidth = getSpaceWidth();
-    wordSpacing = actualSpaceWidth; // Cập nhật wordSpacing với giá trị thực tế
+    wordSpacing = actualSpaceWidth;
 
-    // Phần 2: Chức năng của Sidebar
     toggleBtn.addEventListener('click', () => {
         sidebar.classList.toggle('collapsed');
         mainContents.forEach(mainContent => {
@@ -184,18 +175,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Gọi showPage cho trang chủ khi tải trang lần đầu
     showPage('home-page');
 
     sidebarLinks.forEach(link => {
         link.addEventListener('click', function(event) {
-            event.preventDefault(); // Ngăn chặn hành vi mặc định của thẻ <a>
+            event.preventDefault();
             const targetPageId = this.getAttribute('href').substring(1) + '-page';
             showPage(targetPageId);
         });
     });
 
-    // Phần 3: Chức năng của Hero Slider
     function goToSlide(index) {
         if (index < 0) {
             currentIndex = slides.length - 1;
@@ -226,9 +215,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function goToIndicator(index) {
         goToSlide(index);
     }
-
-    // Phần 4: Chức năng Luyện Gõ (Đã sửa lỗi tính WPM và theo dõi tổng số ký tự)
-
     function getRandomWord() {
         const randomIndex = Math.floor(Math.random() * wordList.length);
         return wordList[randomIndex];
@@ -316,10 +302,9 @@ document.addEventListener('DOMContentLoaded', function() {
         wpmDisplay.innerText = 0;
         accuracyDisplay.innerText = '0%';
 
-        // Lấy giá trị thời gian từ localStorage
         const durationType = getTypingSetting(DURATION_KEY + '_type', '1').trim().toLowerCase();
         const customSecondsString = getTypingSetting(DURATION_KEY + '_custom', '60');
-        const customSeconds = parseInt(customSecondsString, 10) || 60; // Chuyển sang số, mặc định 60 nếu lỗi
+        const customSeconds = parseInt(customSecondsString, 10) || 60;
 
         console.log('Giá trị typingDuration_custom khi init:', customSecondsString);
         console.log('Giá trị typingDuration_type khi init:', durationType);
@@ -329,12 +314,12 @@ document.addEventListener('DOMContentLoaded', function() {
             timeLeft = customSeconds;
             console.log('timeLeft (inside custom):', timeLeft);
             if (timeLeft <= 0) {
-                timeLeft = 60; // Giá trị mặc định nếu không hợp lệ
+                timeLeft = 60;
                 alert('Thời gian tùy chỉnh không hợp lệ, sử dụng 60 giây.');
                 console.log('timeLeft (custom invalid, reset to 60):', timeLeft);
             }
         } else {
-            timeLeft = parseInt(durationType, 10) * 60; // Chuyển phút sang giây
+            timeLeft = parseInt(durationType, 10) * 60;
             console.log('timeLeft (fixed duration):', timeLeft);
         }
         console.log('timeLeft (final):', timeLeft);
@@ -355,7 +340,7 @@ document.addEventListener('DOMContentLoaded', function() {
         wordDisplay.scrollTop = 0;
         typingInput.addEventListener('input', handleInput);
         typingInput.addEventListener('keydown', handleKeyDown);
-        startTime = null; // Reset startTime khi bắt đầu trò chơi mới
+        startTime = null;
     }
 
     function calculateWPM() {
@@ -363,13 +348,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const endTime = new Date().getTime();
         const elapsedSeconds = (endTime - startTime) / 1000;
         const elapsedMinutes = elapsedSeconds / 60;
-        const wordsTyped = totalCorrectChars / 5; // Ước tính số từ
+        const wordsTyped = totalCorrectChars / 5;
         return elapsedMinutes > 0 ? Math.max(0, Math.floor(wordsTyped / elapsedMinutes)) : 0;
     }
 
     function calculateAccuracy() {
         if (totalKeyStrokes === 0) return '0%';
-        return Math.round((totalCorrectChars / totalKeyStrokes) * 100) + '%'; // Accuracy dựa trên tổng số lần gõ phím
+        return Math.round((totalCorrectChars / totalKeyStrokes) * 100) + '%';
     }
 
     function handleKeyDown(event) {
@@ -387,7 +372,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (timeLeft > 0) {
             timeLeft--;
             timeDisplay.innerText = timeLeft;
-            // Cập nhật WPM và Accuracy trong khi đếm ngược (tùy chọn)
             wpmDisplay.innerText = calculateWPM();
             accuracyDisplay.innerText = calculateAccuracy();
         } else {
@@ -398,23 +382,23 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function handleInput() {
-        console.log('isTypoShown:', isTypoShown); // Kiểm tra giá trị của isTypoShown
-    
+        console.log('isTypoShown:', isTypoShown);
+
         if (!timerStartedOnFocusAndInput && document.activeElement === typingInput && typingInput.value.length > 0 && startTime === null) {
             startTime = new Date().getTime();
             timer = setInterval(updateTimer, 1000);
             timerStartedOnFocusAndInput = true;
         }
-    
+
         const typedValue = typingInput.value;
         const currentLine = wordDisplay.childNodes[currentLineIndex];
         const currentWord = currentText[currentWordIndexInLine];
         const currentWordSpan = currentLine ? currentLine.childNodes[currentWordIndexInLine * 2] : null;
-    
+
         if (!currentLine || !currentWordSpan) return;
-    
+
         let currentCorrectCharsInWord = 0;
-    
+
         currentWordSpan.innerHTML = '';
         let expectedWord = currentWord || '';
         for (let i = 0; i < Math.max(typedValue.length, expectedWord.length); i++) {
@@ -422,8 +406,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const expectedChar = expectedWord[i];
             const charSpan = document.createElement('span');
             charSpan.innerText = expectedChar || '';
-    
-            // Chỉ đánh dấu đúng/sai khi isTypoShown là true
+
             if (isTypoShown) {
                 if (typedChar === expectedChar) {
                     charSpan.className = 'correct';
@@ -434,13 +417,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             currentWordSpan.appendChild(charSpan);
         }
-    
+
         if (typedValue.endsWith(' ')) {
             const typedWord = typedValue.trim();
             if (typedWord !== '') {
                 wordsTyped++;
-                totalKeyStrokes += typedWord.length; // Chỉ tăng khi hoàn thành từ
-    
+                totalKeyStrokes += typedWord.length;
+
                 let correctCharsInWordForStats = 0;
                 for (let i = 0; i < Math.min(typedWord.length, expectedWord.length); i++) {
                     if (typedWord[i] === expectedWord[i]) {
@@ -453,12 +436,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     totalCorrectChars += correctCharsInWordForStats;
                     totalIncorrectChars += (typedWord.length - correctCharsInWordForStats);
                 }
-    
+
                 const typedWordSpan = currentLine.childNodes[currentWordIndexInLine * 2];
                 if (typedWordSpan) {
                     typedWordSpan.classList.add('completed');
                     if (isTypoShown) {
-                        typedWordSpan.innerHTML = ''; // Reset innerHTML để re-render highlight
+                        typedWordSpan.innerHTML = '';
                         for (let i = 0; i < expectedWord.length; i++) {
                             const span = document.createElement('span');
                             span.innerText = expectedWord[i];
@@ -467,7 +450,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             } else if (typedWord[i] !== undefined) {
                                 span.className = 'incorrect';
                             } else {
-                                span.className = 'incomplete'; // Class cho ký tự chưa gõ tới
+                                span.className = 'incomplete';
                             }
                             typedWordSpan.appendChild(span);
                         }
@@ -477,11 +460,10 @@ document.addEventListener('DOMContentLoaded', function() {
                             typedWordSpan.classList.add('incorrect-length');
                         }
                     } else {
-                        // Khi tắt hiển thị lỗi, đảm bảo không có class đúng/sai
                         typedWordSpan.innerHTML = expectedWord;
                     }
                 }
-    
+
                 typingInput.value = '';
                 currentWordIndexInLine++;
                 if (currentWordIndexInLine >= currentText.length) {
@@ -504,7 +486,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     currentLine.childNodes[currentWordIndexInLine * 2].classList.add('active');
                 }
             } else {
-                // Xử lý khi người dùng xóa bớt ký tự trong từ đang gõ
                 if (typedValue.length < expectedWord.length && currentWordSpan) {
                     currentWordSpan.innerHTML = '';
                     for (let i = 0; i < typedValue.length; i++) {
@@ -520,7 +501,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         }
-    
+
         wpmDisplay.innerText = calculateWPM();
         accuracyDisplay.innerText = calculateAccuracy();
     }
@@ -530,10 +511,9 @@ document.addEventListener('DOMContentLoaded', function() {
         typingInput.disabled = true;
         const endTime = new Date().getTime();
         const timeTakenSeconds = (endTime - startTime) / 1000;
-        // const timeTakenMinutes = timeTakenSeconds / 60; // Không cần dùng trực tiếp ở đây
 
         const wordsTypedFinal = totalCorrectChars / 5;
-        finalWPM = Math.round(wordsTypedFinal / (timeTakenSeconds / 60)) || 0; // Tính WPM dựa trên giây
+        finalWPM = Math.round(wordsTypedFinal / (timeTakenSeconds / 60)) || 0;
         finalAccuracy = calculateAccuracy();
 
         finalWpmDisplay.innerText = finalWPM;
@@ -559,19 +539,19 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (durationType === '5') {
             durationLabel = '5 phút';
         } else {
-            durationLabel = `${parseInt(durationType, 10)} phút`; // Xử lý các giá trị cố định khác
+            durationLabel = `${parseInt(durationType, 10)} phút`;
         }
 
-        console.log('Giá trị timeTakenSeconds khi endGame:', timeTakenSeconds); // Thêm console.log()
-        console.log('Giá trị durationType khi endGame:', durationType); // Thêm console.log()
-        console.log('Giá trị customDuration khi endGame:', customDuration); // Thêm console.log()
-        console.log('Giá trị durationLabel khi endGame:', durationLabel); // Thêm console.log()
+        console.log('Giá trị timeTakenSeconds khi endGame:', timeTakenSeconds);
+        console.log('Giá trị durationType khi endGame:', durationType);
+        console.log('Giá trị customDuration khi endGame:', customDuration);
+        console.log('Giá trị durationLabel khi endGame:', durationLabel);
 
         history.push({
             timestamp: new Date().toISOString(),
             wpm: finalWPM,
             accuracy: parseFloat(finalAccuracy.slice(0, -1)),
-            duration: timeTakenSeconds, // Lưu tổng số giây
+            duration: timeTakenSeconds,
             durationTypeLabel: durationLabel,
             totalKeystrokes: totalKeyStrokes,
             correctKeystrokes: totalCorrectChars,
@@ -581,8 +561,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     restartButton.addEventListener('click', initTypingGame);
-
-    // Phần 5: Chức năng Thống kê
     const HISTORY_KEY = 'typingHistory';
 
     function getTypingHistory() {
@@ -612,14 +590,13 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function() {
             const tabId = this.getAttribute('data-tab') + '-tab';
             showTab(tabId);
-            updateStatisticsDisplay(); // Cập nhật lại dữ liệu khi chuyển tab (nếu cần)
+            updateStatisticsDisplay();
         });
     });
 
     function updateStatisticsDisplay() {
         const history = getTypingHistory();
 
-        // Cập nhật tab Tổng quan
         overviewTab.innerHTML = '<h3>Tổng quan</h3>';
         if (history.length === 0) {
             overviewTab.innerHTML += '<p>Chưa có dữ liệu luyện tập nào.</p>';
@@ -637,7 +614,6 @@ document.addEventListener('DOMContentLoaded', function() {
             overviewTab.innerHTML += `<p><strong>Số lần luyện tập đã hoàn thành:</strong> ${totalSessions}</p>`;
         }
 
-        // Cập nhật tab Lịch sử
         historyTab.innerHTML = '<h3>Lịch sử luyện tập</h3><ul id="history-list"></ul>';
         const historyList = document.getElementById('history-list');
         if (history.length === 0) {
@@ -659,7 +635,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (entry.durationTypeLabel) {
                     durationText = `Thời gian: ${entry.durationTypeLabel}`;
                 } else {
-                    durationText = `Thời gian: ${Math.round(entry.duration) || 0} giây`; // Đảm bảo có giá trị 0 nếu NaN
+                    durationText = `Thời gian: ${Math.round(entry.duration) || 0} giây`;
                 }
 
                 listItem.textContent = `${dateString} - WPM: ${entry.wpm || 'null'}, Độ chính xác: ${entry.accuracy || 'null'}%, ${durationText}`;
@@ -668,7 +644,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Gọi updateStatisticsDisplay khi trang Thống kê được hiển thị
     const statisticsPageLink = Array.from(sidebarLinks).find(link => link.getAttribute('href') === '#statistics');
     if (statisticsPageLink) {
         statisticsPageLink.addEventListener('click', () => {
@@ -677,22 +652,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Gọi updateStatisticsDisplay khi trang tải lần đầu (nếu người dùng đang ở trang Thống kê)
     if (window.location.hash === '#statistics') {
         showPage('statistics-page');
         updateStatisticsDisplay();
     }
 
-    // Phần 6: Xử lý sự kiện chung và khởi tạo
-
-    // Thêm event listeners cho các nút điều khiển slider và indicator
     if (prevButton) prevButton.addEventListener('click', prevSlide);
     if (nextButton) nextButton.addEventListener('click', nextSlide);
     indicators.forEach((indicator, index) => {
         indicator.addEventListener('click', () => goToIndicator(index));
     });
 
-    // Xử lý sự kiện click trên các nút "slide-button" để chuyển trang
     const slideButtons = document.querySelectorAll('.slide-button');
     slideButtons.forEach(button => {
         button.addEventListener('click', function(event) {
@@ -701,13 +671,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Gọi showPage cho trang chủ khi tải trang lần đầu
     showPage('home-page');
 
-    // Khởi tạo slider
     goToSlide(0);
 
-    // Khởi tạo trò chơi gõ phím khi trang typing được hiển thị lần đầu tiên
     const typingPageLink = Array.from(sidebarLinks).find(link => link.getAttribute('href') === '#typing');
     if (typingPageLink) {
         typingPageLink.addEventListener('click', () => {
