@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwiftTyping</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-keyboard"></i> SwiftTyping</h2>
+                <button class="toggle-sidebar-btn"><i class="fas fa-bars"></i></button>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="active"><a href="#home"><i class="fas fa-home"></i> <span>Trang chủ</span></a></li>
+                <li><a href="#typing"><i class="fas fa-keyboard"></i> <span>Luyện Gõ</span></a></li>
+                <li><a href="#statistics"><i class="fas fa-chart-bar"></i> <span>Thống kê</span></a></li>
+                <li><a href="#settings"><i class="fas fa-cog"></i> <span>Cài đặt</span></a></li>
+            </ul>
+        </aside>
+        <main class="main-content page active" id="home-page">
+            <div class="hero-slider-container">
+                <div class="hero-slide" data-target="typing">
+                    <h1>Luyện Gõ Nhanh</h1>
+                    <p>Thực hành gõ nhanh và chính xác.</p>
+                    <button class="slide-button" data-target="typing">Đi đến luyện gõ <i class="fas fa-keyboard"></i></button>
+                </div>
+                <div class="hero-slide" data-target="statistics">
+                    <h1>Xem Thống Kê</h1>
+                    <p>Theo dõi tiến trình và kết quả của bạn.</p>
+                    <button class="slide-button" data-target="statistics">Xem thống kê <i class="fas fa-chart-bar"></i></button>
+                </div>
+                <div class="hero-slide" data-target="settings">
+                    <h1>Tùy Chỉnh Cài Đặt</h1>
+                    <p>Điều chỉnh trải nghiệm luyện gõ của bạn.</p>
+                    <button class="slide-button" data-target="settings">Đến cài đặt <i class="fas fa-cog"></i></button>
+                </div>
+                <div class="slider-navigation">
+                    <button class="prev-slide"><i class="fas fa-chevron-left"></i></button>
+                    <div class="slide-indicators">
+                        <span class="indicator active" data-index="0"></span>
+                        <span class="indicator" data-index="1"></span>
+                        <span class="indicator" data-index="2"></span>
+                    </div>
+                    <button class="next-slide"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <section class="fast-typing-benefits">
+                <h2>Lợi ích của việc gõ nhanh</h2>
+                <div class="benefits-grid">
+                    <div class="benefit-item">
+                        <i class="fas fa-clock"></i>
+                        <strong>Tiết kiệm thời gian</strong>
+                        <p>Gõ nhanh giúp bạn hoàn thành công việc nhanh hơn, giải phóng thời gian cho những hoạt động khác.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-keyboard"></i>
+                        <strong>Tăng năng suất</strong>
+                        <p>Khi bạn gõ nhanh hơn, bạn có thể ghi chép, viết email và soạn thảo văn bản hiệu quả hơn.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-brain"></i>
+                        <strong>Cải thiện sự tập trung</strong>
+                        <p>Gõ nhanh giúp bạn duy trì dòng chảy suy nghĩ mà không bị gián đoạn bởi việc tìm kiếm phím.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-hand-holding-usd"></i>
+                        <strong>Cơ hội nghề nghiệp tốt hơn</strong>
+                        <p>Nhiều công việc đòi hỏi kỹ năng gõ tốt, mở ra nhiều cơ hội việc làm hấp dẫn.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-thumbs-up"></i>
+                        <strong>Giảm căng thẳng</strong>
+                        <p>Gõ phím một cách thoải mái và nhanh chóng giúp giảm căng thẳng và mệt mỏi khi làm việc trên máy tính.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-comment-dots"></i>
+                        <strong>Giao tiếp hiệu quả hơn</strong>
+                        <p>Trong môi trường trực tuyến, gõ nhanh giúp bạn phản hồi tin nhắn và tham gia trò chuyện nhanh chóng hơn.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-comment-dots"></i>
+                        <strong>Giao tiếp hiệu quả hơn</strong>
+                        <p>Trong môi trường trực tuyến, gõ nhanh giúp bạn phản hồi tin nhắn và tham gia trò chuyện nhanh chóng hơn.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <main class="main-content page" id="typing-page">
+            <div class="typing-area">
+                <div class="word-display"></div>
+                <input type="text" id="typing-input" autofocus>
+                <div class="controls">
+                    <div class="control-item"><i class="far fa-clock"></i> <span id="time">60</span>s</div>
+                    <div class="control-item"><i class="fas fa-tachometer-alt"></i> <span id="wpm">0</span>WPM</div>
+                    <div class="control-item"><i class="fas fa-percent"></i> <span id="accuracy">0%</span></div>
+                </div>
+            </div>
+            <button id="restart-btn" class="restart-button"><i class="fas fa-redo"></i> Thử lại</button>
+            <div class="results-section" id="results">
+                <h3>Kết quả</h3>
+                <p><i class="fas fa-tachometer-alt"></i> WPM cuối cùng: <span id="final-wpm">0</span></p>
+                <p><i class="fas fa-percent"></i> Độ chính xác: <span id="final-accuracy">0%</span></p>
+                <p><i class="fas fa-keyboard"></i> Tổng ký tự: <span id="total-chars">0</span></p>
+                <p><i class="fas fa-check-circle"></i> Ký tự đúng: <span id="correct-chars">0</span></p>
+                <p><i class="fas fa-times-circle"></i> Ký tự sai: <span id="incorrect-chars">0</span></p>
+            </div>
+        </main>
+        <main class="main-content page" id="statistics-page">
+            <h2>Thống kê</h2>
+            <div class="statistics-tabs">
+                <button class="tab-button active" data-tab="overview">Tổng quan</button>
+                <button class="tab-button" data-tab="history">Lịch sử</button>
+            </div>
+            <div id="overview-tab" class="tab-content active">
+                <p>Đang tải dữ liệu tổng quan...</p>
+            </div>
+            <div id="history-tab" class="tab-content">
+                <ul id="history-list">
+                    <li>Đang tải lịch sử luyện tập...</li>
+                </ul>
+            </div>
+        </main>
+        <main class="main-content page active" id="settings-page">
+            <div class="settings-page-wrapper">
+                <h2>Cài đặt</h2>
+
+                <div class="setting-container">
+                    <div class="setting-group-label">
+                        <i class="fas fa-clock icon"></i> Thời gian luyện tập
+                    </div>
+                    <div class="setting-item">
+                        <label for="duration-select">Thời gian:</label>
+                        <select id="duration-select">
+                            <option value="1">1 phút</option>
+                            <option value="2">2 phút</option>
+                            <option value="5">5 phút</option>
+                            <option value="Custom">Tùy chọn</option>
+                        </select>
+                    </div>
+                    <div class="custom-duration-input">
+                        <label for="custom-duration" class="sub-label">Nhập số giây:</label>
+                        <input type="number" id="custom-duration" placeholder="Ví dụ: 90">
+                    </div>
+                </div>
+
+                <div class="setting-container">
+                    <div class="setting-group-label">
+                        <i class="fas fa-adjust icon"></i> Giao diện
+                    </div>
+                    <div class="setting-item">
+                        <label for="dark-mode-switch">Chế độ tối:</label>
+                        <div class="switch-container">
+                            <input type="checkbox" id="dark-mode-switch" class="switch-input">
+                            <label for="dark-mode-switch" class="switch-label">
+                                <span class="switch-inner"></span>
+                                <span class="switch-switch"></span>
+                            </label>
+                            <span class="setting-label-text">Bật</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-container">
+                    <div class="setting-group-label">
+                        <i class="fas fa-keyboard icon"></i> Luyện gõ
+                    </div>
+                    <div class="setting-item">
+                        <label for="show-typo-switch">Hiển thị lỗi:</label>
+                        <div class="switch-container">
+                            <input type="checkbox" id="show-typo-switch" class="switch-input" checked>
+                            <label for="show-typo-switch" class="switch-label">
+                                <span class="switch-inner"></span>
+                                <span class="switch-switch"></span>
+                            </label>
+                            <span class="setting-label-text">Bật</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-container">
+                    <div class="setting-group-label">
+                        <i class="fas fa-volume-up icon"></i> Âm thanh
+                    </div>
+                    <div class="setting-item">
+                        <label for="sound-effects-switch">Hiệu ứng âm thanh:</label>
+                        <div class="switch-container">
+                            <input type="checkbox" id="sound-effects-switch" class="switch-input">
+                            <label for="sound-effects-switch" class="switch-label">
+                                <span class="switch-inner"></span>
+                                <span class="switch-switch"></span>
+                            </label>
+                            <span class="setting-label-text">Tắt</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="note">
+                    Lưu ý: Các thay đổi sẽ được áp dụng ngay lập tức.
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

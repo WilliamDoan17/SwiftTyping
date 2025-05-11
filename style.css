@@ -1,0 +1,1053 @@
+/* ==========================================================================
+   1. General Styles
+   ========================================================================== */
+
+   body {
+    font-family: 'Nunito Sans', sans-serif;
+    background-color: #f4f6f8;
+    margin: 0;
+    color: #333;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    align-items: stretch; /* Kéo dài các phần tử con theo chiều cao body */
+  }
+  
+  .app-container {
+    display: flex;
+    width: 100%;
+    background-color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    min-height: 100vh; /* Đảm bảo app-container cũng cao bằng viewport */
+  }
+  
+  
+
+/* ==========================================================================
+2. Sidebar Styles (Viết lại cho trực quan khi thu gọn)
+========================================================================== */
+
+.sidebar {
+    position: fixed; /* Sử dụng position: fixed; */
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100vh; /* Chiều cao bằng viewport */
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    padding: 20px;
+    flex-shrink: 0;
+    transition: width 0.3s ease;
+    border-right: 1px solid #34495e;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    overflow-y: auto; /* Cho phép cuộn nội dung bên trong sidebar nếu cần */
+    z-index: 10; /* Đảm bảo nằm trên nội dung chính */
+}
+
+.sidebar.collapsed {
+    width: 60px;
+    align-items: center;
+}
+
+/* Header của Sidebar */
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #34495e;
+    margin-bottom: 20px;
+    width: 100%; /* Để nút toggle luôn ở bên phải */
+}
+
+.sidebar-header h2 {
+    font-size: 1.5em;
+    margin: 0;
+    font-weight: bold;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-grow: 1; /* Cho tiêu đề chiếm không gian */
+}
+
+.sidebar.collapsed .sidebar-header h2 {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+}
+
+.toggle-sidebar-btn {
+    background: none;
+    border: none;
+    color: #bdc3c7;
+    cursor: pointer;
+    font-size: 1.2em;
+    padding: 8px;
+    border-radius: 5px;
+    transition: color 0.3s ease, transform 0.3s ease;
+    outline: none;
+}
+
+.toggle-sidebar-btn:hover {
+    color: #fff;
+}
+
+.sidebar.collapsed .toggle-sidebar-btn {
+    transform: rotate(180deg);
+}
+
+/* Menu của Sidebar */
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin-top: 0;
+    width: 100%; /* Đảm bảo menu chiếm hết chiều rộng sidebar */
+}
+
+.sidebar-menu li {
+    margin-bottom: 8px;
+    width: 100%; /* Các mục menu chiếm hết chiều rộng */
+}
+
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    color: #bdc3c7;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%; /* Các link chiếm hết chiều rộng */
+    box-sizing: border-box; /* Tính padding và border vào width */
+    justify-content: flex-start; /* Căn trái icon và text khi mở rộng */
+}
+
+.sidebar.collapsed .sidebar-menu a {
+    justify-content: center; /* Căn giữa icon khi thu gọn */
+    padding: 10px;
+}
+
+.sidebar-menu a i {
+    font-size: 1.1em;
+    margin-right: 10px; /* Khoảng cách giữa icon và text khi mở rộng */
+    min-width: 24px; /* Đảm bảo icon có khoảng trống */
+    text-align: center; /* Căn giữa icon */
+}
+
+.sidebar.collapsed .sidebar-menu a i {
+    margin-right: 0; /* Loại bỏ margin khi thu gọn */
+}
+
+.sidebar-menu a span {
+    /* Hiển thị text khi mở rộng */
+}
+
+.sidebar.collapsed .sidebar-menu a span {
+    display: none; /* Ẩn text khi thu gọn */
+}
+
+.sidebar-menu li.active a {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+
+/* ==========================================================================
+   3. Main Content Styles
+   ========================================================================== */
+
+   .main-content {
+    flex-grow: 1;
+    padding: 40px;
+    box-sizing: border-box;
+    transition: margin-left 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Căn giữa mặc định cho các trang */
+    min-height: 100%;
+    overflow-y: auto;
+    background-color: #f9f9f9;
+    margin-left: 280px;
+  }
+  
+  .main-content.collapsed {
+    margin-left: 60px;
+  }
+  
+  .main-content > .page {
+    display: none;
+    padding: 20px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto 20px auto; /* Căn giữa trang theo chiều ngang */
+  }
+  
+  .main-content > .page.active {
+    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Căn giữa nội dung trang theo chiều ngang */
+  }
+  
+
+/* ==========================================================================
+4. Home Page Styles
+========================================================================== */
+
+#home-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 80px); /* Ví dụ trừ chiều cao header/navigation */
+    text-align: center;
+}
+
+
+/* ==========================================================================
+   5. Hero Slider Styles
+   ========================================================================== */
+
+.hero-slider-container {
+    width: 100%;
+    margin: 40px auto;
+    max-width: 980px;
+    overflow: hidden;
+    position: relative;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    height: 400px;
+}
+
+
+.hero-slide {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    text-align: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.5s ease-in-out;
+    background-color: #f9f9f9;
+    box-sizing: border-box;
+}
+
+.hero-slide h1 {
+    font-size: 2.5em; /* Điều chỉnh kích thước tiêu đề */
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.hero-slide p {
+    font-size: 1.1em; /* Điều chỉnh kích thước đoạn văn */
+    color: #777;
+    margin-bottom: 25px;
+}
+
+.slide-button {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.slide-button:hover {
+    background-color: #2980b9;
+    transform: scale(1.02);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.slider-navigation {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.prev-slide,
+.next-slide {
+    background: none;
+    border: none;
+    color: #777;
+    font-size: 1.3em;
+    cursor: pointer;
+    outline: none;
+    transition: color 0.3s ease;
+}
+
+.prev-slide:hover,
+.next-slide:hover {
+    color: #333;
+}
+
+.slide-indicators {
+    display: flex;
+    gap: 6px;
+}
+
+.indicator {
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #ddd;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.indicator.active {
+    background-color: #3498db;
+}
+
+/* ==========================================================================
+   6. Fast Typing Benefits Section
+   ========================================================================== */
+
+.fast-typing-benefits {
+    width: 100%;
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 40px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.fast-typing-benefits h2 {
+    font-size: 2.2em;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.fast-typing-benefits h2::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 2px;
+    background-color: #3498db;
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Tăng minmax để các thẻ rộng hơn */
+    gap: 25px; /* Tăng khoảng cách */
+    margin-top: 30px;
+}
+
+.benefit-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 30px; /* Tăng padding */
+    border-radius: 12px; /* Bo tròn nhẹ các thẻ */
+    background-color: #f9f9f9;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #eee; /* Thêm border nhẹ */
+}
+
+.benefit-item:hover {
+    transform: translateY(-5px); /* Hiệu ứng nhô lên */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Bóng đổ đậm hơn khi hover */
+}
+
+.benefit-item i {
+    font-size: 2.5em; /* Tăng kích thước icon */
+    color: #3498db;
+    margin-bottom: 20px;
+}
+
+.benefit-item strong {
+    font-size: 1.3em; /* Tăng kích thước tiêu đề lợi ích */
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.benefit-item p {
+    font-size: 1.1em; /* Tăng kích thước đoạn văn */
+    color: #777;
+    line-height: 1.7;
+}
+
+/* ==========================================================================
+   7. Additional Info Section (Optional)
+   ========================================================================== */
+
+   .additional-info {
+    margin-top: 40px; /* Điều chỉnh margin top */
+    padding: 25px; /* Điều chỉnh padding */
+    background-color: #e7f3ff;
+    border-radius: 10px; /* Điều chỉnh bo tròn */
+    text-align: left;
+    box-sizing: border-box;
+}
+
+.additional-info h3 {
+    font-size: 1.4em; /* Điều chỉnh kích thước tiêu đề */
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.additional-info ul {
+    list-style-type: disc;
+    padding-left: 25px;
+    color: #555;
+    line-height: 1.6;
+}
+
+.additional-info li {
+    margin-bottom: 8px;
+}
+
+
+/* ==========================================================================
+8. Typing Area Styles
+========================================================================== */
+
+#typing-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px; /* Điều chỉnh padding */
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.typing-area {
+    background-color: #fff;
+    padding: 25px; /* Điều chỉnh padding */
+    border-radius: 8px; /* Điều chỉnh bo tròn */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 700px; /* Điều chỉnh chiều rộng tối đa */
+    margin-bottom: 25px; /* Điều chỉnh margin bottom */
+    text-align: left; /* Căn trái để dễ đọc */
+}
+
+.word-display {
+    background-color: #f9f9f9;
+    padding: 15px; /* Điều chỉnh padding */
+    border-radius: 6px; /* Điều chỉnh bo tròn */
+    margin-bottom: 15px; /* Điều chỉnh margin bottom */
+    font-size: 1.2em; /* Điều chỉnh kích thước chữ */
+    line-height: 1.7;
+    max-height: 150px; /* Chiều cao tối đa hiển thị, đủ cho vài dòng từ */
+    overflow-y: hidden; /* ẨN THANH CUỘN DỌC */
+    transition: margin-top 0.3s ease-in-out; /* Thêm transition cho hiệu ứng cuộn */
+    padding-top: 15px; /* Để có khoảng trống ban đầu cho dòng đầu tiên */
+    padding-bottom: 15px; /* Để có khoảng trống cho các từ mới xuất hiện */
+    margin-top: 0; /* Reset margin-top */
+}
+
+.word-display span {
+    display: inline-block; /* Để các span nằm trên cùng dòng */
+}
+
+.word-display span.active {
+    color: black; /* Màu chữ đen */
+    background-color: white; /* Màu nền trắng */
+    font-weight: bold; /* Tùy chọn */
+    padding: 2px 5px; /* Tùy chọn */
+    border-radius: 3px; /* Tùy chọn */
+    border: 1px solid #ccc; /* Thêm một đường viền nhẹ để phân biệt nếu cần */
+}
+
+.word-display span.active span.correct {
+    color: green; /* Màu cho ký tự gõ đúng trong từ hiện tại */
+}
+
+.word-display span.active span.incorrect {
+    color: red; /* Màu cho ký tự gõ sai trong từ hiện tại */
+    text-decoration: underline; /* Hoặc kiểu hiển thị khác cho ký tự sai */
+}
+
+.word-display span.completed span.correct {
+    color: green;
+}
+
+.word-display span.completed span.incorrect {
+    color: red;
+    text-decoration: underline;
+}
+
+.word-display span.completed {
+    background-color: #f0f0f0; 
+    color: #777; /* Màu chữ cho toàn bộ từ đã hoàn thành */
+    font-weight: normal; /* Loại bỏ in đậm */
+    border: none;
+}
+
+.word-display span.completed.completed-length {
+    background-color: #f0f0f0; /* Màu nền xám cho từ đủ ký tự */
+    padding: 2px 5px;
+    border-radius: 3px;
+    border: none; /* Loại bỏ border */
+}
+
+.word-display span.completed.incorrect-length {
+    background-color: #ffcc80; /* Màu nền cam cho từ thừa hoặc thiếu ký tự */
+    padding: 2px 5px;
+    border-radius: 3px;
+    border: none; /* Loại bỏ border */
+}
+
+/* Chúng ta có thể bỏ qua .word-display span.completed.incorrect-word ở đây
+   vì gạch chân đã được xử lý ở .word-display span.completed span.incorrect */
+
+#typing-input {
+    width: 100%;
+    padding: 12px; /* Điều chỉnh padding */
+    border: 1px solid #ddd;
+    border-radius: 6px; /* Điều chỉnh bo tròn */
+    font-size: 1em; /* Điều chỉnh kích thước chữ */
+    outline: none;
+    margin-bottom: 20px; /* Điều chỉnh margin bottom */
+    box-sizing: border-box;
+}
+
+.controls {
+    display: flex;
+    gap: 15px; /* Điều chỉnh khoảng cách */
+    align-items: center;
+    margin-bottom: 25px; /* Điều chỉnh margin bottom */
+    color: #555;
+    justify-content: space-between;
+    box-sizing: border-box;
+}
+
+.control-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.9em; /* Điều chỉnh kích thước chữ */
+    box-sizing: border-box;
+}
+
+.control-item i {
+    margin-right: 6px;
+    font-size: 1.1em;
+}
+
+.restart-button {
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 10px 20px; /* Điều chỉnh padding */
+    border-radius: 6px; /* Điều chỉnh bo tròn */
+    font-size: 1em; /* Điều chỉnh kích thước chữ */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.restart-button:hover {
+    background-color: #c0392b;
+}
+
+.restart-button i {
+    margin-right: 6px;
+}
+
+.results-section {
+    padding: 25px; /* Điều chỉnh padding */
+    background-color: #f9f9f9;
+    border-radius: 8px; /* Điều chỉnh bo tròn */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    margin-top: 25px; /* Điều chỉnh margin top */
+    width: 100%;
+    max-width: 700px; /* Điều chỉnh chiều rộng tối đa */
+    box-sizing: border-box;
+}
+
+.results-section h3 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.results-section p {
+    font-size: 1em; /* Điều chỉnh kích thước chữ */
+    margin-bottom: 8px;
+}
+
+.results-section i {
+    margin-right: 6px;
+    color: #3498db;
+}
+
+/* ==========================================================================
+   9. Statistics and Settings Styles
+   ========================================================================== */
+
+#statistics-page,
+#settings-page {
+    padding: 30px; /* Điều chỉnh padding */
+    text-align: center;
+    color: #777;
+    display: none;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+#statistics-page h3,
+#settings-page h3 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 1.4em;
+}
+
+#statistics-page p,
+#settings-page p {
+    font-size: 1em;
+    margin-bottom: 10px;
+}
+
+#settings-page label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+}
+
+#settings-page input[type="text"],
+#settings-page select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    font-size: 1em;
+}
+
+#settings-page button {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#settings-page button:hover {
+    background-color: #2980b9;
+}
+
+
+/* ==========================================================================
+   10. Animations
+   ========================================================================== */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px); /* Giảm khoảng cách dịch lên */
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes pulsate {
+    from {
+        transform: scale(1);
+        opacity: 0.9; /* Giảm độ mờ ban đầu */
+    }
+    to {
+        transform: scale(1.02); /* Giảm mức độ phóng to */
+        opacity: 1;
+    }
+}
+/* ==========================================================================
+   11. Statistics Tabs Styles
+   ========================================================================== */
+
+   .statistics-tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ccc;
+}
+
+.tab-button {
+    background: none;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    color: #777;
+}
+
+.tab-button.active {
+    color: #333;
+    border-bottom: 2px solid #333;
+}
+
+.tab-button:hover {
+    color: #333;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+#history-list {
+    list-style: none;
+    padding: 0;
+}
+
+#history-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+#history-list li:last-child {
+    border-bottom: none;
+}
+
+/* ==========================================================================
+   12. Settings Page Styles
+   ========================================================================== */
+
+   #settings-page {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 30px;
+  }
+  
+  .settings-page-wrapper {
+    width: 98%;
+    max-width: 960px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #e6f7ff;
+    border-radius: 8px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid #aaddff; /* Thêm lại border */
+  }
+  
+  .main-content.collapsed #settings-page .settings-page-wrapper {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  #settings-page h2 {
+    color: #1890ff;
+    margin-bottom: 20px;
+    padding: 15px 20px;
+    font-size: 2em;
+    font-weight: bold;
+    border-bottom: 2px solid #bae7ff;
+    text-align: left;
+  }
+  
+  .setting-container {
+    background-color: #fff;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    margin-bottom: 15px;
+    padding: 15px;
+  }
+  
+  .setting-group-label {
+    display: block;
+    font-weight: bold;
+    color: #1890ff;
+    font-size: 1.1em;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .setting-group-label .icon {
+    font-size: 1.2em;
+  }
+  
+  .setting-item {
+    margin-bottom: 10px;
+    display: flex; /* Sử dụng Flexbox cho các item khác */
+    align-items: center;
+    justify-content: space-between; /* Để label và switch ở hai đầu */
+  }
+  
+  .setting-item label {
+    font-size: 1em;
+    color: #555;
+    text-align: left;
+    flex-grow: 1; /* Để label chiếm không gian còn lại (cho các item không phải duration) */
+    margin-right: 15px;
+  }
+  
+  .setting-item select,
+  .setting-item input[type="number"] {
+    padding: 10px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    font-size: 1em;
+    box-sizing: border-box;
+    width: auto;
+    max-width: 200px;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
+  }
+  
+  .setting-item select:focus,
+  .setting-item input[type="number"]:focus {
+    border-color: #1890ff;
+    box-shadow: 0 0 4px rgba(24, 144, 255, 0.3);
+  }
+  
+  .setting-item.switch-row {
+    /* Các стили cho switch row vẫn giữ nguyên flexbox */
+  }
+  
+  .setting-item.switch-row label {
+    text-align: left;
+  }
+  
+  /* Стиль đặc biệt cho hàng "Thời gian luyện tập" */
+  .setting-item.duration-row {
+    display: grid;
+    grid-template-columns: auto auto 1fr auto auto 1fr; /* Chia thành 6 cột */
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .setting-item.duration-row label:nth-child(1) { /* Label "Thời gian:" */
+    grid-column: 1;
+    text-align: left;
+  }
+  
+  .setting-item.duration-row select {
+    grid-column: 2;
+    padding: 10px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    font-size: 1em;
+    box-sizing: border-box;
+    width: auto;
+    max-width: 100px;
+  }
+  
+  .setting-item.duration-row label:nth-child(3) { /* Label "Nhập số giây:" */
+    grid-column: 4;
+    text-align: left;
+  }
+  
+  .setting-item.duration-row input[type="number"] {
+    grid-column: 5;
+    padding: 10px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    font-size: 1em;
+    box-sizing: border-box;
+    width: auto;
+    max-width: 80px;
+  }
+  
+  .setting-item.duration-row {
+    display: grid;
+    grid-template-columns: auto auto 1fr; /* Chia thành 3 cột chính */
+    gap: 10px 20px; /* Khoảng cách cột và hàng */
+    align-items: center;
+    margin-bottom: 10px; /* Thêm margin dưới hàng này */
+  }
+  
+  .setting-item.duration-row label:nth-child(1) { /* Label "Thời gian:" */
+    grid-column: 1;
+    text-align: left;
+  }
+  
+  .setting-item.duration-row select {
+    grid-column: 2;
+    padding: 10px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    font-size: 1em;
+    box-sizing: border-box;
+    width: auto;
+    max-width: 100px;
+  }
+  
+  .custom-duration-input { /* Chọn div chứa "Nhập số giây:" và input */
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Đẩy label và input ra hai đầu */
+    gap: 10px; /* Khoảng cách giữa label và input (nếu cần) */
+  }
+  
+  .custom-duration-input .sub-label {
+    font-size: 1em;
+    color: #555;
+    text-align: left;
+    width: auto; /* Để label co lại theo nội dung */
+  }
+  
+  .custom-duration-input input[type="number"] {
+    padding: 10px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    font-size: 1em;
+    box-sizing: border-box;
+    width: auto;
+    max-width: 120px; /* Hoặc kích thước bạn muốn */
+    text-align: left; /* Căn chữ nhập liệu sang phải nếu muốn */
+  }
+  
+  .custom-duration-input input[type="number"]::placeholder {
+    color: #aaa;
+    font-size: 0.9em;
+  }
+  
+  .switch-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .switch-container label {
+    margin-right: 10px;
+  }
+  
+  .switch-input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .switch-label {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+    background-color: #ccc;
+    transition: background-color 0.3s ease;
+    border-radius: 20px;
+    margin-left: 10px;
+  }
+  
+  .switch-label .switch-inner {
+    display: none;
+  }
+  
+  .switch-switch {
+    position: absolute;
+    cursor: pointer;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    background-color: white;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 50%;
+  }
+  
+  .switch-input:checked + .switch-label {
+    background-color: #1890ff;
+  }
+  
+  .switch-input:checked + .switch-label .switch-switch {
+    transform: translateX(20px);
+  }
+  
+  .switch-input:focus + .switch-label {
+    box-shadow: 0 0 2px #1890ff;
+  }
+  
+  .setting-label-text {
+    color: #333;
+    font-size: 0.95em;
+    margin-left: 8px;
+  }
+  
+  .note {
+    font-size: 0.85em;
+    color: #777;
+    margin-top: 10px;
+    padding: 0 15px;
+  }
+  
+  /* Dark mode styles (giữ nguyên) */
+  body.dark-mode #settings-page {
+    background-color: #1d1d1d;
+    border-color: #434343;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
+  
+  body.dark-mode #settings-page h2 {
+    color: #40a9ff;
+    border-bottom-color: #303030;
+  }
+  
+  body.dark-mode #settings-page .setting-container {
+    background-color: #262626;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  body.dark-mode #settings-page .setting-group-label {
+    color: #40a9ff;
+  }
+  
+  body.dark-mode #settings-page .setting-item label,
+  body.dark-mode #settings-page .setting-label-text,
+  body.dark-mode #settings-page .note {
+    color: #d9d9d9;
+  }
+  
+  body.dark-mode #settings-page .setting-item select,
+  body.dark-mode #settings-page .setting-item input[type="number"] {
+    background-color: #3a3a3a;
+    color: #d9d9d9;
+    border-color: #595959;
+  }
+  
+  body.dark-mode .switch-label {
+    background-color: #595959;
+  }
+  
+  body.dark-mode .switch-input:checked + .switch-label {
+    background-color: #40a9ff;
+  }
