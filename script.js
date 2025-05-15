@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
+// Phần 1: Khai báo các biến và hằng số
+    const body = document.body;
     const sidebar = document.querySelector('.sidebar');
     const toggleBtn = document.querySelector('.toggle-sidebar-btn');
     const mainContents = document.querySelectorAll('.main-content');
@@ -28,36 +30,53 @@ document.addEventListener('DOMContentLoaded', function() {
     const tabButtons = document.querySelectorAll('.statistics-tabs .tab-button');
     const DURATION_KEY = 'typingDuration';
     const SHOW_TYPO_KEY = 'showTypo';
+    const DARK_MODE_KEY = 'darkMode';
+    const SOUND_KEY = 'sound';
     const showTypoSwitch = document.getElementById('show-typo-switch');
     let isTypoShown = getTypingSetting(SHOW_TYPO_KEY, 'true') === 'true';
+    let isDarkModeEnabled = getTypingSetting(DARK_MODE_KEY, 'true') === 'true';
+    let isSoundEnabled = getTypingSetting(SOUND_KEY, 'true') === 'true';
+    const switches = document.querySelectorAll('.switch');
+    const darkModeSwitch = document.getElementById('dark-mode-switch'); // Thêm dòng này
+    const historyFilterDateInput = document.getElementById('history-filter-date');
+    const historySortBySelect = document.getElementById('history-sort-by');
+    const noDataMessage = document.getElementById('no-data-message');
+    const historyTable = document.getElementById('history-table');
+    const historyTableBody = document.querySelector('#history-table tbody');
+    const historyFilters = document.querySelectorAll('.history-filters');
+    const correctSound = document.getElementById('correct-sound');
+    const incorrectSound = document.getElementById('incorrect-sound');
+    const soundEffectsSwitch = document.getElementById('sound-effects-switch');
 
     function saveTypingSetting(key, value) {
         localStorage.setItem(key, value);
     }
-
+    
     function getTypingSetting(key, defaultValue) {
         return localStorage.getItem(key) || defaultValue;
     }
-
+    
     if (showTypoSwitch) {
-        showTypoSwitch.checked = isTypoShown;
+        showTypoSwitch.checked = getTypingSetting(SHOW_TYPO_KEY, 'true') === 'true';
         showTypoSwitch.addEventListener('change', function() {
             const isChecked = this.checked;
             saveTypingSetting(SHOW_TYPO_KEY, isChecked);
-            isTypoShown = isChecked;
-            console.log('Trạng thái hiển thị lỗi đã được lưu và cập nhật:', isChecked);
+            isTypoShown = isChecked; // Cập nhật trực tiếp biến isTypoShown
         });
     }
 
+    // Lấy các phần tử HTML liên quan đến tùy chọn thời gian
     const durationSelect = document.getElementById('duration-select');
     const customDurationInputContainer = document.querySelector('.custom-duration-input');
-    const customDurationInput = document.getElementById('custom-duration');
+    const customDurationInput = document.getElementById('custom-duration'); // Đảm bảo đã khai báo
 
+    // Ẩn phần nhập số giây tùy chỉnh ban đầu và thiết lập giá trị ban đầu
     if (customDurationInputContainer) {
         const durationType = getTypingSetting(DURATION_KEY + '_type', 'fixed').toLowerCase();
         customDurationInputContainer.style.display = durationType === 'custom' ? 'flex' : 'none';
 
         if (customDurationInput) {
+            // Lấy giá trị tùy chỉnh đã lưu và hiển thị
             const savedCustomDuration = getTypingSetting(DURATION_KEY + '_custom', '60');
             customDurationInput.value = savedCustomDuration;
 
@@ -67,13 +86,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     if (durationSelect) {
-        durationSelect.value = getTypingSetting(DURATION_KEY + '_type', '1');
+        durationSelect.value = getTypingSetting(DURATION_KEY + '_type', '1'); // Mặc định là 1 phút
 
         durationSelect.addEventListener('change', function() {
             saveTypingSetting(DURATION_KEY + '_type', this.value);
             if (this.value === 'Custom') {
                 if (customDurationInputContainer) {
                     customDurationInputContainer.style.display = 'flex';
+                    // Đảm bảo hiển thị lại giá trị đã lưu khi chuyển sang Custom
                     if (customDurationInput) {
                         const savedCustomDuration = getTypingSetting(DURATION_KEY + '_custom', '60');
                         customDurationInput.value = savedCustomDuration;
@@ -83,10 +103,67 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (customDurationInputContainer) {
                     customDurationInputContainer.style.display = 'none';
                 }
+                // Lưu giá trị cố định đã chọn để lần sau còn nhớ
                 saveTypingSetting(DURATION_KEY + '_fixed', this.value);
             }
+            // Có thể bạn muốn gọi initTypingGame() ở đây nếu trang Luyện gõ đang mở
         });
     }
+
+
+    if (isDarkModeEnabled) {
+        body.classList.add('dark-mode');
+    } else {
+        body.classList.remove('dark-mode');
+    }
+
+    if (darkModeSwitch) {
+        darkModeSwitch.checked = getTypingSetting(DARK_MODE_KEY, 'true') === 'true';
+        darkModeSwitch.addEventListener('change', function() {
+            const isChecked = this.checked;
+            saveTypingSetting(DARK_MODE_KEY, isChecked);
+            isDarkModeEnabled = isChecked;
+            body.classList.toggle('dark-mode');
+        });
+    }
+
+    if (soundEffectsSwitch) {
+        soundEffectsSwitch.addEventListener('change', function() {
+            isSoundEnabled = this.checked;
+            saveTypingSetting('soundEffects', isSoundEnabled); // Lưu cài đặt
+        });
+        // Khởi tạo trạng thái ban đầu từ localStorage (nếu có)
+        isSoundEnabled = getTypingSetting('soundEffects', 'false') === 'true';
+        soundEffectsSwitch.checked = isSoundEnabled;
+    }
+
+    function playSound(audio, volume = 1.0) {
+        if (isSoundEnabled && audio) {
+            audio.currentTime = 0;
+            audio.volume = volume; // Đặt âm lượng
+            audio.play();
+        }
+    }
+
+    switches.forEach(switchElement => {
+        const labelTextElement = switchElement.nextElementSibling; // Lấy phần tử span.switch-label-text
+        const inputElement = switchElement.querySelector('input');
+
+        switchElement.addEventListener('change', () => { // Sử dụng arrow function
+            if (inputElement.checked) {
+                labelTextElement.innerText = 'Bật';
+            } else {
+                labelTextElement.innerText = 'Tắt';
+            }
+        });
+
+        // Thiết lập trạng thái ban đầu khi trang tải
+        if (inputElement.checked) {
+            labelTextElement.innerText = 'Bật';
+        } else {
+            labelTextElement.innerText = 'Tắt';
+        }
+    });
 
     const wordList = [
         'áo', 'ấm', 'ăn', 'ắt', 'ăng', 'ả', 'ải', 'ấy', 'ảnh', 'ẩn', 'ảo', 'bão', 'báo', 'béo', 'bếp', 'bên', 'bị', 'bìa', 'bữa', 'bưởi', 'bụi', 'bút', 'cả', 'cải', 'cảm', 'canh', 'cắt', 'cây', 'cơm', 'cờ', 'cửa', 'cứu', 'cú', 'củ', 'chủ', 'chương', 'chuyện', 'chân', 'chim', 'chè', 'chở', 'chất', 'chứng', 'chân', 'chảy', 'dài', 'dân', 'dầu', 'dày', 'dẫn', 'đầy', 'đẹp', 'đất', 'đi', 'điều', 'điểm', 'điện', 'dở', 'đủ', 'dưỡng', 'em', 'én', 'êm', 'ép', 'ghế', 'giày', 'giấc', 'giúp', 'gìn', 'học', 'hát', 'hơn', 'họp', 'hợp', 'hệ', 'hiểu', 'hỏi', 'hoa', 'hủy', 'hứa', 'hóa', 'hành', 'hiện', 'hẳn', 'hãy', 'hoặc', 'hồn', 'hoàng', 'hôn', 'ích', 'in', 'ấn', 'kém', 'kêu', 'không', 'khi', 'khoẻ', 'khóa', 'khổ', 'kiên', 'kiến', 'kiểu', 'kiểm', 'kỹ', 'là', 'lá', 'lạ', 'lâu', 'lắm', 'lăn', 'lần', 'lớp', 'lịch', 'liền', 'lửa', 'lựa', 'lượng', 'lớn', 'lời', 'mát', 'máu', 'mặt', 'mây', 'mất', 'mẹ', 'mẻ', 'mùa', 'muộn', 'mừng', 'mỹ', 'mũi', 'nơi', 'nhỏ', 'nhận', 'nhớ', 'nhẹ', 'nhạc', 'nhiều', 'nhiệt', 'nhưng', 'như', 'nhẫn', 'nghỉ', 'ngủ', 'nghĩ', 'ngắn', 'người', 'ngày', 'ngọn', 'ngờ', 'ngụy', 'nặng', 'nóng', 'nước', 'nữa', 'nếu', 'nỗi', 'nở', 'nữ', 'ốc', 'ông', 'ốm', 'ớt', 'ơi', 'ổn', 'ôm', 'ôn', 'tổ', 'tổn', 'ưa', 'ức', 'ưng', 'ướt', 'ừ', 'ử', 'ừm', 'ủng', 'ủi', 'ước', 'ưỡn', 'ươm', 'ươn', 'oán', 'oằn', 'ôi', 'ôn', 'quá', 'quạt', 'quyết', 'quen', 'quyền', 'quê', 'quý', 'quốc', 'quên', 'quẩy', 'rạng', 'rỗi', 'rộng', 'rủi'
@@ -99,16 +176,17 @@ document.addEventListener('DOMContentLoaded', function() {
     let wordsTyped = 0;
     let currentText = [];
     let timerStartedOnFocusAndInput = false;
-    let linesOfText = [];
-    let currentLineIndex = 0;
-    let currentWordIndexInLine = 0;
-    let wordSpacing;
+    let linesOfText = []; // Mảng chứa các hàng văn bản
+    let currentLineIndex = 0; // Theo dõi hàng hiện tại đang gõ
+    let currentWordIndexInLine = 0; // Theo dõi từ hiện tại trong hàng
+    let wordSpacing; // Khai báo wordSpacing ở đây
     let totalKeyStrokes = 0;
-    let totalCorrectChars = 0;
-    let totalIncorrectChars = 0;
-    let startTime = null;
+    let totalCorrectChars = 0; // Tổng số ký tự đúng từ đầu bài
+    let totalIncorrectChars = 0; // Tổng số ký tự sai từ đầu bài
+    let startTime = null; // Thời điểm bắt đầu bài kiểm tra
     let finalWPM = 0;
     let finalAccuracy = 0;
+    let currentStatisticsTabId = 'overview-tab';
 
     function getMaxLineWidth() {
         const wordDisplay = document.querySelector('.word-display');
@@ -117,9 +195,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const paddingRight = parseFloat(getComputedStyle(wordDisplay).paddingRight) || 0;
             return wordDisplay.offsetWidth - paddingLeft - paddingRight;
         }
-        return 680;
+        return 680; // Giá trị mặc định nếu không tìm thấy wordDisplay
     }
 
+    // Đo chiều rộng thực tế của khoảng trắng và cập nhật wordSpacing
     function getSpaceWidth() {
         if (!wordDisplay) {
             console.error('.word-display element is not available');
@@ -138,8 +217,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     const actualSpaceWidth = getSpaceWidth();
-    wordSpacing = actualSpaceWidth;
+    wordSpacing = actualSpaceWidth; // Cập nhật wordSpacing với giá trị thực tế
 
+    // Phần 2: Chức năng của Sidebar
     toggleBtn.addEventListener('click', () => {
         sidebar.classList.toggle('collapsed');
         mainContents.forEach(mainContent => {
@@ -175,16 +255,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Gọi showPage cho trang chủ khi tải trang lần đầu
     showPage('home-page');
 
     sidebarLinks.forEach(link => {
         link.addEventListener('click', function(event) {
-            event.preventDefault();
+            event.preventDefault(); // Ngăn chặn hành vi mặc định của thẻ <a>
             const targetPageId = this.getAttribute('href').substring(1) + '-page';
             showPage(targetPageId);
         });
     });
 
+    // Phần 3: Chức năng của Hero Slider
     function goToSlide(index) {
         if (index < 0) {
             currentIndex = slides.length - 1;
@@ -215,6 +297,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function goToIndicator(index) {
         goToSlide(index);
     }
+
+    // Phần 4: Chức năng Luyện Gõ (Đã sửa lỗi tính WPM và theo dõi tổng số ký tự)
+
     function getRandomWord() {
         const randomIndex = Math.floor(Math.random() * wordList.length);
         return wordList[randomIndex];
@@ -292,6 +377,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function initTypingGame() {
+
         totalKeyStrokes = 0;
         totalCorrectChars = 0;
         totalIncorrectChars = 0;
@@ -301,39 +387,37 @@ document.addEventListener('DOMContentLoaded', function() {
         resultsSection.style.display = 'none';
         wpmDisplay.innerText = 0;
         accuracyDisplay.innerText = '0%';
-
+    
+        // Thiết lập giá trị mặc định cho thời gian tùy chỉnh nếu chưa tồn tại
+        if (localStorage.getItem(DURATION_KEY + '_custom') === null) {
+            localStorage.setItem(DURATION_KEY + '_custom', '60');
+        }
+    
+        // Lấy giá trị thời gian từ localStorage
         const durationType = getTypingSetting(DURATION_KEY + '_type', '1').trim().toLowerCase();
-        const customSecondsString = getTypingSetting(DURATION_KEY + '_custom', '60');
+        const customSecondsString = getTypingSetting(DURATION_KEY + '_custom', '60'); // Giá trị mặc định là 60
         const customSeconds = parseInt(customSecondsString, 10) || 60;
-
-        console.log('Giá trị typingDuration_custom khi init:', customSecondsString);
-        console.log('Giá trị typingDuration_type khi init:', durationType);
-        console.log('Giá trị customSeconds sau parseInt:', customSeconds);
-
+    
         if (durationType === 'custom') {
             timeLeft = customSeconds;
-            console.log('timeLeft (inside custom):', timeLeft);
             if (timeLeft <= 0) {
-                timeLeft = 60;
+                timeLeft = 60; // Giá trị mặc định nếu không hợp lệ
                 alert('Thời gian tùy chỉnh không hợp lệ, sử dụng 60 giây.');
-                console.log('timeLeft (custom invalid, reset to 60):', timeLeft);
             }
         } else {
-            timeLeft = parseInt(durationType, 10) * 60;
-            console.log('timeLeft (fixed duration):', timeLeft);
+            timeLeft = parseInt(durationType, 10) * 60; // Chuyển phút sang giây
         }
-        console.log('timeLeft (final):', timeLeft);
         timeDisplay.innerText = timeLeft;
-
+    
         currentWordIndexInLine = 0;
-        currentLineIndex = 0;
-
+    
         linesOfText = [];
-        for (let i = 0; i < 3; i++) {
+        const initialLines = 3;
+        for (let i = 0; i < initialLines; i++) {
             linesOfText.push(generateLineOfText());
         }
         displayLines();
-
+    
         clearInterval(timer);
         timer = null;
         timerStartedOnFocusAndInput = false;
@@ -341,20 +425,20 @@ document.addEventListener('DOMContentLoaded', function() {
         typingInput.addEventListener('input', handleInput);
         typingInput.addEventListener('keydown', handleKeyDown);
         startTime = null;
-    }
+    }    
 
     function calculateWPM() {
         if (!startTime || totalCorrectChars === 0) return 0;
         const endTime = new Date().getTime();
         const elapsedSeconds = (endTime - startTime) / 1000;
         const elapsedMinutes = elapsedSeconds / 60;
-        const wordsTyped = totalCorrectChars / 5;
+        const wordsTyped = totalCorrectChars / 5; // Ước tính số từ
         return elapsedMinutes > 0 ? Math.max(0, Math.floor(wordsTyped / elapsedMinutes)) : 0;
     }
 
     function calculateAccuracy() {
-        if (totalKeyStrokes === 0) return '0%';
-        return Math.round((totalCorrectChars / totalKeyStrokes) * 100) + '%';
+        if (totalKeyStrokes === 0) return 0;
+        return Math.round((totalCorrectChars / totalKeyStrokes) * 100); // Accuracy dựa trên tổng số lần gõ phím
     }
 
     function handleKeyDown(event) {
@@ -372,6 +456,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (timeLeft > 0) {
             timeLeft--;
             timeDisplay.innerText = timeLeft;
+            // Cập nhật WPM và Accuracy trong khi đếm ngược (tùy chọn)
             wpmDisplay.innerText = calculateWPM();
             accuracyDisplay.innerText = calculateAccuracy();
         } else {
@@ -382,23 +467,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function handleInput() {
-        console.log('isTypoShown:', isTypoShown);
-
+    
+        // Phần 1: Khởi động bộ đếm thời gian
         if (!timerStartedOnFocusAndInput && document.activeElement === typingInput && typingInput.value.length > 0 && startTime === null) {
             startTime = new Date().getTime();
             timer = setInterval(updateTimer, 1000);
             timerStartedOnFocusAndInput = true;
         }
-
+    
+        // Phần 2: Lấy thông tin hiện tại
         const typedValue = typingInput.value;
-        const currentLine = wordDisplay.childNodes[currentLineIndex];
+        const currentLine = wordDisplay.childNodes[0]; // Hàng hiện tại luôn là hàng đầu tiên
         const currentWord = currentText[currentWordIndexInLine];
         const currentWordSpan = currentLine ? currentLine.childNodes[currentWordIndexInLine * 2] : null;
-
+    
         if (!currentLine || !currentWordSpan) return;
-
+    
+        // Phần 3: Xử lý ký tự đã nhập trong từ hiện tại
         let currentCorrectCharsInWord = 0;
-
+    
         currentWordSpan.innerHTML = '';
         let expectedWord = currentWord || '';
         for (let i = 0; i < Math.max(typedValue.length, expectedWord.length); i++) {
@@ -406,24 +493,36 @@ document.addEventListener('DOMContentLoaded', function() {
             const expectedChar = expectedWord[i];
             const charSpan = document.createElement('span');
             charSpan.innerText = expectedChar || '';
-
+    
+            // Chỉ đánh dấu đúng/sai khi isTypoShown là true
             if (isTypoShown) {
                 if (typedChar === expectedChar) {
                     charSpan.className = 'correct';
                     currentCorrectCharsInWord++;
+                    if (isSoundEnabled) {
+                        playSound(correctSound, 1);
+                    }
                 } else if (typedChar !== undefined) {
                     charSpan.className = 'incorrect';
+                    if (isSoundEnabled) {
+                        playSound(incorrectSound, 0.05);
+                    }
+                }
+            } else {
+                if (isSoundEnabled) {
+                    playSound(correctSound);
                 }
             }
             currentWordSpan.appendChild(charSpan);
         }
-
+    
+        // Phần 4: Xử lý khi hoàn thành một từ (gõ dấu cách)
         if (typedValue.endsWith(' ')) {
             const typedWord = typedValue.trim();
             if (typedWord !== '') {
                 wordsTyped++;
                 totalKeyStrokes += typedWord.length;
-
+    
                 let correctCharsInWordForStats = 0;
                 for (let i = 0; i < Math.min(typedWord.length, expectedWord.length); i++) {
                     if (typedWord[i] === expectedWord[i]) {
@@ -436,12 +535,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     totalCorrectChars += correctCharsInWordForStats;
                     totalIncorrectChars += (typedWord.length - correctCharsInWordForStats);
                 }
-
+    
                 const typedWordSpan = currentLine.childNodes[currentWordIndexInLine * 2];
                 if (typedWordSpan) {
                     typedWordSpan.classList.add('completed');
                     if (isTypoShown) {
-                        typedWordSpan.innerHTML = '';
+                        typedWordSpan.innerHTML = ''; // Reset innerHTML để re-render highlight
                         for (let i = 0; i < expectedWord.length; i++) {
                             const span = document.createElement('span');
                             span.innerText = expectedWord[i];
@@ -450,7 +549,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             } else if (typedWord[i] !== undefined) {
                                 span.className = 'incorrect';
                             } else {
-                                span.className = 'incomplete';
+                                span.className = 'incomplete'; // Class cho ký tự chưa gõ tới
                             }
                             typedWordSpan.appendChild(span);
                         }
@@ -460,114 +559,146 @@ document.addEventListener('DOMContentLoaded', function() {
                             typedWordSpan.classList.add('incorrect-length');
                         }
                     } else {
+                        // Khi tắt hiển thị lỗi, đảm bảo không có class đúng/sai
                         typedWordSpan.innerHTML = expectedWord;
                     }
                 }
-
+    
                 typingInput.value = '';
                 currentWordIndexInLine++;
+    
                 if (currentWordIndexInLine >= currentText.length) {
-                    currentLineIndex++;
-                    currentWordIndexInLine = 0;
-                    if (currentLineIndex < linesOfText.length) {
-                        currentText = linesOfText[currentLineIndex];
-                        const nextLine = wordDisplay.childNodes[currentLineIndex];
-                        if (nextLine && nextLine.firstChild) {
-                            nextLine.firstChild.classList.add('active');
+                    // Đã gõ hết hàng hiện tại
+                    linesOfText.shift(); // Xóa hàng đầu tiên
+                    wordDisplay.removeChild(wordDisplay.firstChild); // Xóa hàng đầu tiên khỏi DOM
+    
+                    const newLine = generateLineOfText();
+                    linesOfText.push(newLine); // Thêm hàng mới xuống cuối
+                    const newLineDiv = document.createElement('div');
+                    newLineDiv.classList.add('word-line');
+                    newLine.forEach((word, index) => {
+                        const wordSpan = document.createElement('span');
+                        wordSpan.innerText = word;
+                        newLineDiv.appendChild(wordSpan);
+                        if (index < newLine.length - 1) {
+                            newLineDiv.appendChild(document.createTextNode(' '));
                         }
-                        wordDisplay.scrollTop = nextLine ? nextLine.offsetTop : wordDisplay.scrollHeight;
-                    } else {
-                        clearInterval(timer);
-                        typingInput.disabled = true;
-                        endGame();
+                    });
+                    wordDisplay.appendChild(newLineDiv);
+    
+                    currentWordIndexInLine = 0; // Reset về từ đầu tiên của hàng mới
+                    currentText = linesOfText[0] || [];
+    
+                    // Đảm bảo từ đầu tiên của hàng mới có class 'active'
+                    if (wordDisplay.firstChild && wordDisplay.firstChild.firstChild) {
+                        wordDisplay.firstChild.firstChild.classList.add('active');
                     }
-                }
-                if (currentLine && currentLine.childNodes[currentWordIndexInLine * 2]) {
-                    currentLine.childNodes[currentWordIndexInLine * 2].classList.add('active');
+    
+                    wordDisplay.scrollTop = 0; // Đảm bảo scroll về đầu để thấy hàng mới
+                } else {
+                    // Chuyển sang từ tiếp theo trong hàng
+                    if (currentLine && currentLine.childNodes[currentWordIndexInLine * 2]) {
+                        currentLine.childNodes[currentWordIndexInLine * 2].classList.add('active');
+                    }
                 }
             } else {
-                if (typedValue.length < expectedWord.length && currentWordSpan) {
-                    currentWordSpan.innerHTML = '';
-                    for (let i = 0; i < typedValue.length; i++) {
-                        const charSpan = document.createElement('span');
-                        charSpan.innerText = expectedWord[i] || '';
-                        currentWordSpan.appendChild(charSpan);
+                typingInput.value = ''; // Xóa dấu cách thừa
+            }
+        } else {
+            // Phần 5: Xử lý khi người dùng xóa bớt ký tự trong từ đang gõ
+            if (typedValue.length < expectedWord.length && currentWordSpan) {
+                currentWordSpan.innerHTML = '';
+                for (let i = 0; i < typedValue.length; i++) {
+                    const charSpan = document.createElement('span');
+                    charSpan.innerText = expectedWord[i] || '';
+                    if (isTypoShown && typedValue[i] === expectedWord[i]) {
+                        charSpan.className = 'correct';
+                    } else if (isTypoShown && typedValue[i] !== undefined) {
+                        charSpan.className = 'incorrect';
                     }
-                    for (let i = typedValue.length; i < expectedWord.length; i++) {
-                        const charSpan = document.createElement('span');
-                        charSpan.innerText = expectedWord[i];
-                        currentWordSpan.appendChild(charSpan);
-                    }
+                    currentWordSpan.appendChild(charSpan);
+                }
+                for (let i = typedValue.length; i < expectedWord.length; i++) {
+                    const charSpan = document.createElement('span');
+                    charSpan.innerText = expectedWord[i];
+                    currentWordSpan.appendChild(charSpan);
                 }
             }
         }
-
+    
+        // Phần 6: Cập nhật hiển thị WPM và Accuracy
         wpmDisplay.innerText = calculateWPM();
         accuracyDisplay.innerText = calculateAccuracy();
     }
 
+
     function endGame() {
-        clearInterval(timer);
+        
+        clearInterval(timer); // Dừng timer
+        timer = null; // Đặt timer về null để tránh gọi lại ngoài ý muốn
         typingInput.disabled = true;
+        
         const endTime = new Date().getTime();
-        const timeTakenSeconds = (endTime - startTime) / 1000;
+        const elapsedSeconds = Math.round((endTime - startTime) / 1000);
+        const wpm = calculateWPM();
+        const accuracy = calculateAccuracy();
+        finalWPM = wpm;
+        finalAccuracy = accuracy;
+    
+        // Lấy loại thời gian và giá trị thời gian
+        const durationType = getTypingSetting(DURATION_KEY + '_type', '1').trim().toLowerCase();
+        let durationLabel = '';
+        let actualDuration = 0; // Thời lượng thực tế của bài kiểm tra
+    
+        if (durationType === 'custom') {
+            const customSeconds = parseInt(getTypingSetting(DURATION_KEY + '_custom', '60'), 10) || 60;
+            durationLabel = `Tùy chỉnh (${customSeconds} giây)`;
+            actualDuration = elapsedSeconds; // Thời lượng thực tế đã trôi qua
+        } else {
+            durationLabel = `${durationType} phút`;
+            actualDuration = timeLeft; // Thời lượng ban đầu
+        }
+    
+        const historyEntry = {
+            date: new Date(),
+            wpm: wpm,
+            accuracy: Number(accuracy),
+            duration: actualDuration,
+            durationTypeLabel: durationLabel,
+            timestamp: startTime,
+        };
+    
+        let history = getTypingHistory();
+        history.push(historyEntry);
+        localStorage.setItem(TYPING_HISTORY_KEY, JSON.stringify(history));
+    
+        displayResults(); 
+        updateStatisticsDisplay();
+    }     
 
-        const wordsTypedFinal = totalCorrectChars / 5;
-        finalWPM = Math.round(wordsTypedFinal / (timeTakenSeconds / 60)) || 0;
-        finalAccuracy = calculateAccuracy();
-
+    function displayResults() {
+        resultsSection.style.display = 'flex';
         finalWpmDisplay.innerText = finalWPM;
-        finalAccuracyDisplay.innerText = finalAccuracy;
+        finalAccuracyDisplay.innerText = finalAccuracy + '%';
         totalCharsDisplay.innerText = totalKeyStrokes;
         correctCharsDisplay.innerText = totalCorrectChars;
         incorrectCharsDisplay.innerText = totalIncorrectChars;
-        resultsSection.style.display = 'block';
-
-        const history = getTypingHistory();
-        const durationType = getTypingSetting(DURATION_KEY + '_type', '1');
-        const customDuration = getTypingSetting(DURATION_KEY + '_custom', '');
-
-        let durationLabel = '';
-        if (durationType.toLowerCase() === 'custom') {
-            durationLabel = `Tùy chỉnh (${customDuration} giây)`;
-        } else if (durationType === '1') {
-            durationLabel = '1 phút';
-        } else if (durationType === '2') {
-            durationLabel = '2 phút';
-        } else if (durationType === '3') {
-            durationLabel = '3 phút';
-        } else if (durationType === '5') {
-            durationLabel = '5 phút';
-        } else {
-            durationLabel = `${parseInt(durationType, 10)} phút`;
-        }
-
-        console.log('Giá trị timeTakenSeconds khi endGame:', timeTakenSeconds);
-        console.log('Giá trị durationType khi endGame:', durationType);
-        console.log('Giá trị customDuration khi endGame:', customDuration);
-        console.log('Giá trị durationLabel khi endGame:', durationLabel);
-
-        history.push({
-            timestamp: new Date().toISOString(),
-            wpm: finalWPM,
-            accuracy: parseFloat(finalAccuracy.slice(0, -1)),
-            duration: timeTakenSeconds,
-            durationTypeLabel: durationLabel,
-            totalKeystrokes: totalKeyStrokes,
-            correctKeystrokes: totalCorrectChars,
-            incorrectKeystrokes: totalIncorrectChars
-        });
-        saveTypingHistory(history);
     }
 
     restartButton.addEventListener('click', initTypingGame);
-    const HISTORY_KEY = 'typingHistory';
+
+    // Phần 5: Chức năng Thống kê
+    const TYPING_HISTORY_KEY = 'typingHistory';
+    const HISTORY_PAGE_SIZE = 8; // Số mục lịch sử hiển thị trên mỗi trang
+    let currentPage = 1; // Trang hiện tại
+    let totalPages = 1; // Tổng số trang
+    const paginationDiv = document.getElementById('pagination'); // Phần tử div chứa các nút phân trang
 
     function getTypingHistory() {
-        const historyString = localStorage.getItem(HISTORY_KEY);
+        const historyString = localStorage.getItem(TYPING_HISTORY_KEY);
         return historyString ? JSON.parse(historyString) : [];
     }
-
+    
     function saveTypingHistory(history) {
         localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
     }
@@ -584,85 +715,321 @@ document.addEventListener('DOMContentLoaded', function() {
         if (activeButton) {
             activeButton.classList.add('active');
         }
+
+        currentStatisticsTabId = tabId;
+
+        switch(tabId) {
+            case 'history-tab':
+                const history = getTypingHistory();
+                displayHistory(history, history.length === 0, 1);
+                break;
+            case 'overview-tab':
+                displayOverview();
+                break;
+        }
     }
 
     tabButtons.forEach(button => {
         button.addEventListener('click', function() {
             const tabId = this.getAttribute('data-tab') + '-tab';
             showTab(tabId);
-            updateStatisticsDisplay();
+            updateStatisticsDisplay(); // Cập nhật lại dữ liệu khi chuyển tab (nếu cần)
         });
     });
 
+    
     function updateStatisticsDisplay() {
-        const history = getTypingHistory();
+        // Cập nhật tab Lịch sử
+        switch (currentStatisticsTabId) {
+            case 'history-tab':
+                const history = getTypingHistory();
+                displayHistory(history, history.length === 0);
+                break;
+            case 'overview-tab':
+                displayOverview();
+                break;
+        }
+    }
 
-        overviewTab.innerHTML = '<h3>Tổng quan</h3>';
+    function displayOverview() {
+        const history = getTypingHistory();
+        // Lấy các phần tử HTML cần thiết
+        const averageWpmDisplay = document.getElementById('average-wpm');
+        const averageAccuracyDisplay = document.getElementById('average-accuracy');
+        const averageTimeDisplay = document.getElementById('average-time');
+    
+        // Cập nhật tab Tổng quan
         if (history.length === 0) {
-            overviewTab.innerHTML += '<p>Chưa có dữ liệu luyện tập nào.</p>';
+            averageWpmDisplay.textContent = '--';
+            averageAccuracyDisplay.textContent = '--';
+            averageTimeDisplay.textContent = '--';
         } else {
+            let totalTimeInSeconds = 0; // Sử dụng biến mới để tính tổng thời gian
+
+            history.forEach(entry => {
+                let entryDurationInSeconds = 0;
+            
+                if (entry.durationTypeLabel) {
+                    const label = entry.durationTypeLabel.toLowerCase();
+            
+                    if (label.includes('phút')) {
+                        const minutes = parseInt(label.split(' ')[0], 10) || 0;
+                        entryDurationInSeconds = minutes * 60;
+                    } else if (label.includes('tùy chỉnh')) {
+                        const match = label.match(/^tùy chỉnh\s*\((\d+)\s*giây\)$/);
+                        if (match) {
+                            entryDurationInSeconds = parseInt(match[1], 10) || 0;
+                        }
+                    } else if (label.includes('giây') && !label.includes('tùy chỉnh')) {
+                        entryDurationInSeconds = parseInt(label.split(' ')[0], 10) || 0;
+                    }
+                } else if (entry.duration) {
+                    entryDurationInSeconds = entry.duration;
+                }
+            
+                totalTimeInSeconds += entryDurationInSeconds;
+            });
+
+            // Tính toán các giá trị thống kê
             const totalWPM = history.reduce((sum, entry) => sum + (entry.wpm || 0), 0);
             const averageWPM = history.length > 0 ? Math.round(totalWPM / history.length) : 0;
+    
+            const validAccuracyEntries = history.filter(entry => typeof entry.accuracy === 'number');
+            const totalAccuracy = validAccuracyEntries.reduce((sum, entry) => sum + (entry.accuracy || 0), 0);
+            const averageAccuracy = validAccuracyEntries.length > 0
+                ? (totalAccuracy / validAccuracyEntries.length).toFixed(0) + '%'
+                : '0%';
+    
+            const averageTimeInSeconds = history.length > 0 ? totalTimeInSeconds / history.length : 0;
 
-            const totalAccuracy = history.reduce((sum, entry) => sum + (entry.accuracy || 0), 0);
-            const averageAccuracy = history.length > 0 ? (totalAccuracy / history.length).toFixed(2) + '%' : '0%';
-
-            const totalSessions = history.length;
-
-            overviewTab.innerHTML += `<p><strong>WPM trung bình:</strong> ${averageWPM}</p>`;
-            overviewTab.innerHTML += `<p><strong>Độ chính xác trung bình:</strong> ${averageAccuracy}</p>`;
-            overviewTab.innerHTML += `<p><strong>Số lần luyện tập đã hoàn thành:</strong> ${totalSessions}</p>`;
+            const minutes = Math.floor(averageTimeInSeconds / 60);
+            const seconds = Math.round(averageTimeInSeconds % 60);
+    
+            let averageTimeText = '';
+            if (minutes > 0) {
+                averageTimeText += minutes + ' <span class="unit">phút</span> ';
+            }
+            if (seconds > 0 || minutes === 0) {
+                averageTimeText += seconds + ' <span class="average-time-unit">giây</span>';
+            }
+    
+            averageTimeDisplay.innerHTML = averageTimeText; // Sử dụng innerHTML để thêm span
+            averageWpmDisplay.textContent = averageWPM;
+            averageAccuracyDisplay.textContent = averageAccuracy;
         }
+    }
 
-        historyTab.innerHTML = '<h3>Lịch sử luyện tập</h3><ul id="history-list"></ul>';
-        const historyList = document.getElementById('history-list');
-        if (history.length === 0) {
-            const noDataMessage = document.createElement('li');
-            noDataMessage.textContent = 'Chưa có lịch sử luyện tập.';
-            historyList.appendChild(noDataMessage);
-        } else {
-            history.forEach(entry => {
-                const listItem = document.createElement('li');
-                let dateString = 'Invalid Date';
+    historyFilterDateInput.addEventListener('change', filterAndSortHistory);
+    historySortBySelect.addEventListener('change', filterAndSortHistory);
 
-                if (entry.timestamp) {
-                    dateString = new Date(entry.timestamp).toLocaleString();
-                } else if (entry.date) {
-                    dateString = new Date(entry.date).toLocaleString();
-                }
+    function filterAndSortHistory() {
+        try {
+            const history = getTypingHistory();
+            if (history.length === 0) {
+                displayHistory(history, 1);
+                return;
+            }
+            let filteredHistory = [...history];
 
-                let durationText = '';
-                if (entry.durationTypeLabel) {
-                    durationText = `Thời gian: ${entry.durationTypeLabel}`;
-                } else {
-                    durationText = `Thời gian: ${Math.round(entry.duration) || 0} giây`;
-                }
+            // Lọc theo ngày
+            const selectedDate = historyFilterDateInput.value;
+            if (selectedDate) {
+                filteredHistory = filteredHistory.filter(entry => {
+                    let entryDate;
+                    let entryDateString;
+                    if (entry.timestamp) {
+                        entryDate = new Date(entry.timestamp);
+                        entryDateString = entryDate.toISOString().split('T')[0];
+                    } else if (entry.date) {
+                        entryDate = new Date(entry.date);
+                        entryDateString = entryDate.toISOString().split('T')[0];
+                    } else {
+                        console.warn("Entry missing timestamp and date:", entry);
+                        return false; // Bỏ qua mục nếu không có ngày tháng
+                    }
+                    return entryDateString === selectedDate;
+                });
+            }
 
-                listItem.textContent = `${dateString} - WPM: ${entry.wpm || 'null'}, Độ chính xác: ${entry.accuracy || 'null'}%, ${durationText}`;
-                historyList.appendChild(listItem);
+            // Sắp xếp
+            const sortBy = historySortBySelect.value;
+
+            switch (sortBy) {
+                case 'time':
+                    filteredHistory.sort((a, b) => {
+                        const dateA = a.timestamp ? new Date(a.timestamp) : a.date ? new Date(a.date) : null;
+                        const dateB = b.timestamp ? new Date(b.timestamp) : b.date ? new Date(b.date) : null;
+
+                        if (!dateA || !dateB) {
+                            console.warn("Entry missing timestamp or date for sorting:", a, b);
+                            return 0; // Giữ nguyên thứ tự nếu thiếu ngày tháng
+                        }
+                        return dateA - dateB;
+                    });
+                    break;
+                case 'wpm':
+                    filteredHistory.sort((a, b) => {
+                        const wpmA = Number(a.wpm) || 0;
+                        const wpmB = Number(b.wpm) || 0;
+                        return wpmB - wpmA;
+                    });
+                    break;
+                case 'accuracy':
+                    filteredHistory.sort((a, b) => {
+                        const accuracyA = Number(a.accuracy) || 0;
+                        const accuracyB = Number(b.accuracy) || 0;
+                        return accuracyB - accuracyA;
+                    });
+                    break;
+            }
+
+            displayHistory(filteredHistory);
+
+        } catch (error) {
+            console.error("Lỗi trong filterAndSortHistory:", error);
+            // Xử lý lỗi (ví dụ: hiển thị thông báo cho người dùng)
+        }
+    }
+
+    function createPaginationButtons(history, currentPage) {
+        const totalPages = Math.ceil(history.length / HISTORY_PAGE_SIZE);
+    
+        if (totalPages <= 1) return;
+    
+        const paginationDiv = document.getElementById('pagination');
+        paginationDiv.innerHTML = '';
+    
+        let pageButtons = []; // Lưu trữ các nút trang để dễ dàng thao tác
+    
+        // Nút "Trước"
+        if (currentPage > 1) {
+            const prevButton = document.createElement('button');
+            prevButton.textContent = 'Trước';
+            prevButton.addEventListener('click', () => {
+                displayHistory(history, 0, currentPage - 1);
+                updateActiveButton(pageButtons, currentPage - 1); // Cập nhật active
             });
+            paginationDiv.appendChild(prevButton);
+        }
+    
+        // Các nút số
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.textContent = i;
+            pageButtons.push(pageButton); // Thêm vào mảng
+    
+            if (i === currentPage) {
+                pageButton.classList.add('active');
+            }
+    
+            pageButton.addEventListener('click', () => {
+                displayHistory(history, 0, i);
+                updateActiveButton(pageButtons, i); // Cập nhật active
+            });
+            paginationDiv.appendChild(pageButton);
+        }
+    
+        // Nút "Sau"
+        if (currentPage < totalPages) {
+            const nextButton = document.createElement('button');
+            nextButton.textContent = 'Sau';
+            nextButton.addEventListener('click', () => {
+                displayHistory(history, 0, currentPage + 1);
+                updateActiveButton(pageButtons, currentPage + 1); // Cập nhật active
+            });
+            paginationDiv.appendChild(nextButton);
         }
     }
+    
+    function updateActiveButton(buttons, activePage) {
+        buttons.forEach(button => button.classList.remove('active'));
+        buttons[activePage - 1].classList.add('active');
+    }
+    
+    function displayHistory(history, isHistoryNull = 0, page = 1) {
+        
+        if (isHistoryNull) {
+            historyFilters.forEach(historyFilter => {
+                historyFilter.style.display = 'none';
+            });
+            historyTable.style.display = 'none';
+            noDataMessage.style.display = 'block';
+            return;
+        }
 
-    const statisticsPageLink = Array.from(sidebarLinks).find(link => link.getAttribute('href') === '#statistics');
-    if (statisticsPageLink) {
-        statisticsPageLink.addEventListener('click', () => {
-            showPage('statistics-page');
-            updateStatisticsDisplay();
+        console.log("Giá trị của history:", history); // Thêm dòng này
+
+        historyTableBody.innerHTML = ''; // Xóa dữ liệu cũ trước khi hiển thị mới
+    
+        if (history.length === 0) {
+            historyTableBody.innerHTML = 'Không có dữ liệu';
+        } 
+
+        historyFilters.forEach(historyFilter => historyFilter.style.display = 'flex');
+        historyTable.style.display = 'table';
+        noDataMessage.style.display = 'none';
+
+        const startIndex = (page - 1) * HISTORY_PAGE_SIZE;
+        const endIndex = startIndex + HISTORY_PAGE_SIZE;
+        const pageHistory = history.slice(startIndex, endIndex);
+        
+        pageHistory.forEach(entry => {
+            let dateString = 'Invalid Date';
+            if (entry.timestamp) {
+                dateString = new Date(entry.timestamp).toLocaleString();
+            } else if (entry.date) {
+                dateString = new Date(entry.date).toLocaleString();
+            }
+    
+            let durationText = '';
+            if (entry.durationTypeLabel && entry.durationTypeLabel.toLowerCase().startsWith('tùy chỉnh')) {
+                durationText = entry.durationTypeLabel;
+            } else if (entry.durationTypeLabel) {
+                durationText = entry.durationTypeLabel;
+            } else {
+                durationText = `${Math.round(entry.duration) || 0} giây`;
+            }
+    
+            const row = historyTableBody.insertRow();
+            const timeCell = row.insertCell();
+            const wpmCell = row.insertCell();
+            const accuracyCell = row.insertCell();
+            const modeCell = row.insertCell();
+            const detailsCell = row.insertCell();
+    
+            timeCell.textContent = dateString;
+            wpmCell.textContent = entry.wpm || 'N/A';
+            accuracyCell.textContent = (typeof entry.accuracy === 'number') ? entry.accuracy.toFixed(0) + '%' : 'N/A';
+            modeCell.textContent = durationText; // HIỂN THỊ DURATION_TEXT Ở ĐÂY
+            detailsCell.innerHTML = `<button class="view-details-btn" data-entry='${JSON.stringify(entry)}'>Xem chi tiết</button>`;
         });
+    
+        const detailButtons = document.querySelectorAll('.view-details-btn');
+        detailButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const entryData = JSON.parse(this.getAttribute('data-entry'));
+                displaySessionDetails(entryData);
+            });
+        });
+        createPaginationButtons(history, page);
     }
 
-    if (window.location.hash === '#statistics') {
-        showPage('statistics-page');
-        updateStatisticsDisplay();
+    function displaySessionDetails(entry) {
+        // code hiển thị chi tiết session
+        alert(`Chi tiết phiên:\nThời gian: ${new Date(entry.timestamp).toLocaleString()}\nWPM: ${entry.wpm}\nĐộ chính xác: ${entry.accuracy}%`);
     }
 
+    // Gọi updateStatisticsDisplay khi trang Thống kê được hiển thị
+    // Phần 6: Xử lý sự kiện chung và khởi tạo
+
+    // Thêm event listeners cho các nút điều khiển slider và indicator
     if (prevButton) prevButton.addEventListener('click', prevSlide);
     if (nextButton) nextButton.addEventListener('click', nextSlide);
     indicators.forEach((indicator, index) => {
         indicator.addEventListener('click', () => goToIndicator(index));
     });
 
+    // Xử lý sự kiện click trên các nút "slide-button" để chuyển trang
     const slideButtons = document.querySelectorAll('.slide-button');
     slideButtons.forEach(button => {
         button.addEventListener('click', function(event) {
@@ -671,10 +1038,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Gọi showPage cho trang chủ khi tải trang lần đầu
     showPage('home-page');
 
+    // Khởi tạo slider
     goToSlide(0);
 
+    // Khởi tạo trò chơi gõ phím khi trang typing được hiển thị lần đầu tiên
     const typingPageLink = Array.from(sidebarLinks).find(link => link.getAttribute('href') === '#typing');
     if (typingPageLink) {
         typingPageLink.addEventListener('click', () => {
