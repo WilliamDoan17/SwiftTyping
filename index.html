@@ -83,11 +83,6 @@
                         <strong>Giao tiếp hiệu quả hơn</strong>
                         <p>Trong môi trường trực tuyến, gõ nhanh giúp bạn phản hồi tin nhắn và tham gia trò chuyện nhanh chóng hơn.</p>
                     </div>
-                    <div class="benefit-item">
-                        <i class="fas fa-comment-dots"></i>
-                        <strong>Giao tiếp hiệu quả hơn</strong>
-                        <p>Trong môi trường trực tuyến, gõ nhanh giúp bạn phản hồi tin nhắn và tham gia trò chuyện nhanh chóng hơn.</p>
-                    </div>
                 </div>
             </section>
         </main>
@@ -103,33 +98,130 @@
             </div>
             <button id="restart-btn" class="restart-button"><i class="fas fa-redo"></i> Thử lại</button>
             <div class="results-section" id="results">
-                <h3>Kết quả</h3>
-                <p><i class="fas fa-tachometer-alt"></i> WPM cuối cùng: <span id="final-wpm">0</span></p>
-                <p><i class="fas fa-percent"></i> Độ chính xác: <span id="final-accuracy">0%</span></p>
-                <p><i class="fas fa-keyboard"></i> Tổng ký tự: <span id="total-chars">0</span></p>
-                <p><i class="fas fa-check-circle"></i> Ký tự đúng: <span id="correct-chars">0</span></p>
-                <p><i class="fas fa-times-circle"></i> Ký tự sai: <span id="incorrect-chars">0</span></p>
+                <div class="results-header">
+                    <i class="fas fa-poll-h"></i>
+                    <h3>Kết quả</h3>
+                </div>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <i class="fas fa-tachometer-alt"></i>
+                                <span class="label">WPM cuối:</span>
+                                <span id="final-wpm" class="value">0</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <i class="fas fa-percent"></i>
+                                <span class="label">Độ chính xác:</span>
+                                <span id="final-accuracy" class="value">0%</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <i class="fas fa-keyboard"></i>
+                                <span class="label">Tổng ký tự:</span>
+                                <span id="total-chars" class="value">22</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <i class="fas fa-check-circle"></i>
+                                <span class="label">Ký tự đúng:</span>
+                                <span id="correct-chars" class="value">22</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <i class="fas fa-times-circle"></i>
+                                <span class="label">Ký tự sai:</span>
+                                <span id="incorrect-chars" class="value">0</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </main>
         <main class="main-content page" id="statistics-page">
-            <h2>Thống kê</h2>
             <div class="statistics-tabs">
-                <button class="tab-button active" data-tab="overview">Tổng quan</button>
-                <button class="tab-button" data-tab="history">Lịch sử</button>
+                <button class="tab-button active" data-tab="overview">
+                    <i class="fas fa-chart-line"></i>
+                    Tổng quan
+                </button>
+                <button class="tab-button" data-tab="history">
+                    <i class="fas fa-history"></i>
+                    Lịch sử
+                </button>
             </div>
-            <div id="overview-tab" class="tab-content active">
-                <p>Đang tải dữ liệu tổng quan...</p>
-            </div>
-            <div id="history-tab" class="tab-content">
-                <ul id="history-list">
-                    <li>Đang tải lịch sử luyện tập...</li>
-                </ul>
+        
+            <div class="statistics-content"> <div id="overview-tab" class="tab-content active">
+                    <h2><i class="fas fa-chart-line"></i> Thống kê Tổng quan</h2>
+                    <div class="statistics-overview">
+                        <div class="overview-item">
+                            <h3>WPM trung bình</h3>
+                            <div class="data-display">
+                                <span id="average-wpm">--</span>
+                                <span class="unit">WPM</span>
+                            </div>
+                        </div>
+                        <div class="overview-item">
+                            <h3>Độ chính xác trung bình</h3>
+                            <div class="data-display">
+                                <span id="average-accuracy">--</span>
+                            </div>
+                        </div>
+                        <div class="overview-item">
+                            <h3>Thời gian luyện tập trung bình</h3>
+                            <div class="data-display">
+                                <span id="average-time">--</span>
+                                <span class="unit"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <div id="history-tab" class="tab-content">
+                    <h2><i class="fas fa-history"></i> Lịch sử Luyện tập</h2>
+                    <div class="statistics-history">
+                        <div class="history-filters">
+                            <label for="history-filter-date">Lọc theo ngày:</label>
+                            <input type="date" id="history-filter-date">
+        
+                            <label for="history-sort-by">Sắp xếp theo:</label>
+                            <select id="history-sort-by">
+                                <option value="time">Thời gian</option>
+                                <option value="wpm">WPM</option>
+                                <option value="accuracy">Độ chính xác</option>
+                            </select>
+                        </div>
+                        <p id="no-data-message" style="text-align: center; display: none;">Chưa có dữ liệu luyện tập.</p>
+                        <table id="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Thời gian</th>
+                                    <th>WPM</th>
+                                    <th>Độ chính xác</th>
+                                    <th>Chế độ</th>
+                                    <th>Chi tiết</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="5">Không có dữ liệu.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div id="pagination">
+                            </div>
+                    </div>
+                </div>
             </div>
         </main>
         <main class="main-content page active" id="settings-page">
             <div class="settings-page-wrapper">
                 <h2>Cài đặt</h2>
-
+        
                 <div class="setting-container">
                     <div class="setting-group-label">
                         <i class="fas fa-clock icon"></i> Thời gian luyện tập
@@ -148,65 +240,64 @@
                         <input type="number" id="custom-duration" placeholder="Ví dụ: 90">
                     </div>
                 </div>
-
+        
                 <div class="setting-container">
                     <div class="setting-group-label">
                         <i class="fas fa-adjust icon"></i> Giao diện
                     </div>
                     <div class="setting-item">
                         <label for="dark-mode-switch">Chế độ tối:</label>
-                        <div class="switch-container">
-                            <input type="checkbox" id="dark-mode-switch" class="switch-input">
-                            <label for="dark-mode-switch" class="switch-label">
-                                <span class="switch-inner"></span>
-                                <span class="switch-switch"></span>
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="dark-mode-switch" class="switch-input">
+                                <span class="slider"></span>
                             </label>
-                            <span class="setting-label-text">Bật</span>
+                            <span class="switch-label-text">Tắt</span>
                         </div>
                     </div>
                 </div>
-
+        
                 <div class="setting-container">
                     <div class="setting-group-label">
                         <i class="fas fa-keyboard icon"></i> Luyện gõ
                     </div>
                     <div class="setting-item">
                         <label for="show-typo-switch">Hiển thị lỗi:</label>
-                        <div class="switch-container">
-                            <input type="checkbox" id="show-typo-switch" class="switch-input" checked>
-                            <label for="show-typo-switch" class="switch-label">
-                                <span class="switch-inner"></span>
-                                <span class="switch-switch"></span>
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="show-typo-switch" class="switch-input" checked>
+                                <span class="slider"></span>
                             </label>
-                            <span class="setting-label-text">Bật</span>
+                            <span class="switch-label-text">Bật</span>
                         </div>
                     </div>
                 </div>
-
+        
                 <div class="setting-container">
                     <div class="setting-group-label">
                         <i class="fas fa-volume-up icon"></i> Âm thanh
                     </div>
                     <div class="setting-item">
                         <label for="sound-effects-switch">Hiệu ứng âm thanh:</label>
-                        <div class="switch-container">
-                            <input type="checkbox" id="sound-effects-switch" class="switch-input">
-                            <label for="sound-effects-switch" class="switch-label">
-                                <span class="switch-inner"></span>
-                                <span class="switch-switch"></span>
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="sound-effects-switch" class="switch-input">
+                                <span class="slider"></span>
                             </label>
-                            <span class="setting-label-text">Tắt</span>
+                            <span class="switch-label-text">Tắt</span>
                         </div>
                     </div>
                 </div>
-
+        
                 <div class="note">
                     Lưu ý: Các thay đổi sẽ được áp dụng ngay lập tức.
                 </div>
             </div>
         </main>
+        <audio id="correct-sound" src="sounds/correct.wav"></audio>
+        <audio id="incorrect-sound" src="sounds/incorrect.wav"></audio>
     </div>
-
     <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>
